@@ -1,0 +1,808 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>寻找huge的新队友</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: "Microsoft YaHei", "PingFang SC", Arial, sans-serif;
+      color: #1f2937;
+      background:
+        radial-gradient(circle at 20% 20%, rgba(255, 230, 156, 0.55), transparent 28rem),
+        linear-gradient(135deg, #f4efe5 0%, #dce9df 45%, #e9edf6 100%);
+    }
+
+    main {
+      width: min(1180px, calc(100% - 32px));
+      min-height: 100vh;
+      margin: 0 auto;
+      padding: 28px 0 36px;
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+      gap: 24px;
+    }
+
+    .topbar {
+      min-height: 56px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .start-button {
+      display: none;
+      border: 0;
+      border-radius: 8px;
+      padding: 15px 34px;
+      color: #fff;
+      background: #12745c;
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: 0;
+      cursor: pointer;
+      box-shadow: 0 14px 32px rgba(18, 116, 92, 0.28);
+      transition: transform 0.16s ease, box-shadow 0.16s ease, background 0.16s ease;
+    }
+
+    .start-button:hover {
+      transform: translateY(-2px);
+      background: #0f624f;
+      box-shadow: 0 18px 38px rgba(18, 116, 92, 0.34);
+    }
+
+    .start-button.visible {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .dig-area {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 18px;
+      min-height: 280px;
+    }
+
+    .dig-button {
+      width: clamp(128px, 18vw, 188px);
+      aspect-ratio: 1;
+      border: 0;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(145deg, #fff8e8, #ffd36e);
+      box-shadow:
+        inset 0 -12px 22px rgba(154, 103, 20, 0.14),
+        0 22px 45px rgba(117, 83, 25, 0.25);
+      cursor: pointer;
+      transition: transform 0.16s ease, box-shadow 0.16s ease, opacity 0.2s ease;
+    }
+
+    .dig-button:hover {
+      transform: translateY(-4px) rotate(-2deg);
+      box-shadow:
+        inset 0 -12px 22px rgba(154, 103, 20, 0.16),
+        0 28px 56px rgba(117, 83, 25, 0.32);
+    }
+
+    .dig-button.hidden {
+      display: none;
+    }
+
+    .shovel {
+      width: 58%;
+      height: 58%;
+      filter: drop-shadow(0 8px 10px rgba(73, 48, 15, 0.2));
+    }
+
+    .dig-label {
+      margin: 0;
+      font-size: 24px;
+      font-weight: 800;
+      color: #3c2f18;
+    }
+
+    .dig-label.hidden {
+      display: none;
+    }
+
+    .squad {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 18px;
+      align-items: stretch;
+    }
+
+    .squad.four {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    .slot {
+      border: 2px solid rgba(75, 85, 99, 0.18);
+      border-radius: 8px;
+      overflow: hidden;
+      background: rgba(255, 255, 255, 0.72);
+      box-shadow: 0 18px 34px rgba(31, 41, 55, 0.12);
+      display: grid;
+      grid-template-rows: auto 1fr;
+    }
+
+    .slot-image {
+      width: 100%;
+      aspect-ratio: 1;
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+      color: #69727f;
+      background: #dfe5ec;
+      font-size: clamp(40px, 7vw, 78px);
+      font-weight: 900;
+    }
+
+    .slot-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .slot-body {
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .slot-name {
+      margin: 0;
+      color: #111827;
+      font-size: 24px;
+      line-height: 1.15;
+    }
+
+    .slot-desc {
+      margin: 0;
+      color: #4b5563;
+      font-size: 15px;
+      line-height: 1.5;
+    }
+
+    .empty {
+      border-style: dashed;
+      background: rgba(255, 255, 255, 0.46);
+    }
+
+    .empty .slot-image {
+      background:
+        linear-gradient(45deg, rgba(148, 163, 184, 0.16) 25%, transparent 25%),
+        linear-gradient(-45deg, rgba(148, 163, 184, 0.16) 25%, transparent 25%),
+        linear-gradient(45deg, transparent 75%, rgba(148, 163, 184, 0.16) 75%),
+        linear-gradient(-45deg, transparent 75%, rgba(148, 163, 184, 0.16) 75%),
+        #e7edf3;
+      background-position: 0 0, 0 12px, 12px -12px, -12px 0;
+      background-size: 24px 24px;
+    }
+
+    .modal {
+      position: fixed;
+      inset: 0;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 22px;
+      background: rgba(17, 24, 39, 0.58);
+      z-index: 10;
+    }
+
+    .modal.visible {
+      display: flex;
+    }
+
+    .modal-card {
+      width: min(520px, 100%);
+      border-radius: 8px;
+      overflow: hidden;
+      background: #ffffff;
+      box-shadow: 0 28px 80px rgba(0, 0, 0, 0.34);
+      cursor: pointer;
+      animation: pop 0.18s ease-out;
+    }
+
+    .modal-card img {
+      width: 100%;
+      height: 300px;
+      object-fit: cover;
+      display: block;
+      background: #e5e7eb;
+    }
+
+    .modal-content {
+      padding: 22px;
+    }
+
+    .modal-kicker {
+      margin: 0 0 8px;
+      color: #b45309;
+      font-size: 14px;
+      font-weight: 900;
+    }
+
+    .modal-name {
+      margin: 0 0 10px;
+      color: #111827;
+      font-size: 30px;
+      line-height: 1.15;
+    }
+
+    .modal-desc {
+      margin: 0;
+      color: #4b5563;
+      font-size: 16px;
+      line-height: 1.6;
+    }
+
+    .match-overlay {
+      position: fixed;
+      inset: 0;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      background: rgba(15, 23, 42, 0.82);
+      z-index: 20;
+    }
+
+    .match-overlay.visible {
+      display: flex;
+    }
+
+    .match-panel {
+      width: min(720px, 100%);
+      border-radius: 8px;
+      padding: 34px 28px;
+      background: rgba(255, 255, 255, 0.94);
+      box-shadow: 0 28px 90px rgba(0, 0, 0, 0.38);
+      display: grid;
+      gap: 24px;
+      justify-items: center;
+      text-align: center;
+    }
+
+    .match-spinner {
+      width: 82px;
+      height: 82px;
+      border-radius: 50%;
+      border: 8px solid rgba(18, 116, 92, 0.18);
+      border-top-color: #12745c;
+      animation: spin 0.9s linear infinite;
+    }
+
+    .match-stage {
+      margin: 0;
+      color: #0f172a;
+      font-size: 30px;
+      font-weight: 900;
+    }
+
+    .match-text {
+      margin: 0;
+      color: #334155;
+      font-size: 18px;
+      line-height: 1.7;
+      min-height: 3.4em;
+    }
+
+    @keyframes spin {
+      from {
+        transform: rotate(0deg);
+      }
+
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    .result-screen {
+      position: fixed;
+      inset: 0;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 28px;
+      background:
+        linear-gradient(135deg, rgba(248, 250, 252, 0.96), rgba(220, 233, 223, 0.96)),
+        #f8fafc;
+      z-index: 25;
+    }
+
+    .result-screen.visible {
+      display: flex;
+    }
+
+    .result-panel {
+      width: min(820px, 100%);
+      border-radius: 8px;
+      padding: 42px 36px;
+      background: rgba(255, 255, 255, 0.9);
+      box-shadow: 0 24px 70px rgba(15, 23, 42, 0.18);
+      display: grid;
+      gap: 18px;
+    }
+
+    .result-kicker {
+      margin: 0;
+      color: #12745c;
+      font-size: 16px;
+      font-weight: 900;
+    }
+
+    .result-title {
+      margin: 0;
+      color: #0f172a;
+      font-size: clamp(34px, 7vw, 64px);
+      line-height: 1;
+    }
+
+    .result-body {
+      margin: 0;
+      color: #334155;
+      font-size: 20px;
+      line-height: 1.8;
+    }
+
+    .retry-button {
+      width: fit-content;
+      border: 0;
+      border-radius: 8px;
+      padding: 14px 26px;
+      color: #ffffff;
+      background: #12745c;
+      font-size: 18px;
+      font-weight: 800;
+      cursor: pointer;
+      box-shadow: 0 14px 28px rgba(18, 116, 92, 0.24);
+      transition: transform 0.16s ease, background 0.16s ease;
+    }
+
+    .retry-button:hover {
+      transform: translateY(-2px);
+      background: #0f624f;
+    }
+
+    @keyframes pop {
+      from {
+        transform: translateY(12px) scale(0.96);
+        opacity: 0;
+      }
+
+      to {
+        transform: translateY(0) scale(1);
+        opacity: 1;
+      }
+    }
+
+    @media (max-width: 900px) {
+      .squad,
+      .squad.four {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 560px) {
+      main {
+        width: min(100% - 22px, 1180px);
+        padding-top: 18px;
+        gap: 16px;
+      }
+
+      .squad,
+      .squad.four {
+        grid-template-columns: 1fr;
+      }
+      .modal-card img {
+        height: 230px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <div class="topbar">
+      <button class="start-button" id="startButton" type="button">开始比赛</button>
+    </div>
+
+    <section class="dig-area">
+      <button class="dig-button" id="digButton" type="button" aria-label="发掘选手">
+        <svg class="shovel" viewBox="0 0 120 120" aria-hidden="true">
+          <path d="M79 12c10 2 17 9 19 19 1 5-1 11-5 15L74 65 55 46l19-19c2-2 3-5 3-8 0-3 0-5 2-7z" fill="#475569"/>
+          <path d="M52 49l19 19-7 7-19-19 7-7z" fill="#f59e0b"/>
+          <path d="M42 57l21 21-36 36c-4 4-11 4-15 0l-6-6c-4-4-4-11 0-15l36-36z" fill="#92400e"/>
+          <path d="M15 97l9-9 14 14-9 9c-3 3-8 3-11 0l-3-3c-3-3-3-8 0-11z" fill="#78350f"/>
+          <path d="M85 18c8 3 12 8 12 16 0 4-1 7-4 10L82 55 62 35l11-11c3-3 7-5 12-6z" fill="#64748b"/>
+        </svg>
+      </button>
+      <p class="dig-label" id="digLabel">点击发掘一位选手</p>
+    </section>
+
+    <section class="squad" id="squad"></section>
+  </main>
+
+  <div class="modal" id="playerModal" role="dialog" aria-modal="true" aria-labelledby="modalName">
+    <article class="modal-card">
+      <img id="modalImage" alt="">
+      <div class="modal-content">
+        <p class="modal-kicker">发掘成功</p>
+        <h2 class="modal-name" id="modalName"></h2>
+        <p class="modal-desc" id="modalDesc"></p>
+      </div>
+    </article>
+  </div>
+
+  <div class="match-overlay" id="matchOverlay" aria-live="polite" aria-hidden="true">
+    <div class="match-panel">
+      <div class="match-spinner" aria-hidden="true"></div>
+      <p class="match-stage" id="matchStage">小组赛</p>
+      <p class="match-text" id="matchText">正在布置比赛场地</p>
+    </div>
+  </div>
+
+  <section class="result-screen" id="resultScreen" aria-hidden="true">
+    <div class="result-panel">
+      <p class="result-kicker" id="resultStage">比赛结果</p>
+      <h1 class="result-title" id="resultTitle"></h1>
+      <p class="result-body" id="resultBody"></p>
+      <button class="retry-button" id="retryButton" type="button">再试一次</button>
+    </div>
+  </section>
+
+  <script>
+    const dataPath = "resource/players.json";
+    const imageExtensions = ["png", "jpg", "jpeg", "webp", "gif"];
+    const squad = document.getElementById("squad");
+    const digButton = document.getElementById("digButton");
+    const digLabel = document.getElementById("digLabel");
+    const startButton = document.getElementById("startButton");
+    const playerModal = document.getElementById("playerModal");
+    const modalImage = document.getElementById("modalImage");
+    const modalName = document.getElementById("modalName");
+    const modalDesc = document.getElementById("modalDesc");
+    const matchOverlay = document.getElementById("matchOverlay");
+    const matchStage = document.getElementById("matchStage");
+    const matchText = document.getElementById("matchText");
+    const resultScreen = document.getElementById("resultScreen");
+    const resultStage = document.getElementById("resultStage");
+    const resultTitle = document.getElementById("resultTitle");
+    const resultBody = document.getElementById("resultBody");
+    const retryButton = document.getElementById("retryButton");
+    let allPlayers = [];
+    let team = [];
+    let initialPlayerId = "3mz";
+    let isStartingMatch = false;
+    let isMatchLocked = false;
+
+    function normalizePlayer(player) {
+      return {
+        id: player.id,
+        name: player.name || player.id,
+        score: Number(player.score) || 0,
+        desc: player.desc || player.description || ""
+      };
+    }
+
+    function playerImagePath(player, index) {
+      return `resource/${player.id}.${imageExtensions[index]}`;
+    }
+
+    function setPlayerImage(image, imageWrap, player, index = 0) {
+      if (index >= imageExtensions.length) {
+        image.remove();
+        imageWrap.textContent = player.id;
+        return;
+      }
+
+      image.src = playerImagePath(player, index);
+      image.onerror = () => setPlayerImage(image, imageWrap, player, index + 1);
+    }
+
+    function setModalImage(player, index = 0) {
+      if (index >= imageExtensions.length) {
+        modalImage.removeAttribute("src");
+        return;
+      }
+
+      modalImage.src = playerImagePath(player, index);
+      modalImage.onerror = () => setModalImage(player, index + 1);
+    }
+
+    function renderTeam() {
+      const slotCount = team.length >= 4 ? 4 : 3;
+      squad.classList.toggle("four", slotCount === 4);
+      squad.innerHTML = "";
+
+      for (let index = 0; index < slotCount; index += 1) {
+        const player = team[index];
+        const slot = document.createElement("article");
+        slot.className = player ? "slot" : "slot empty";
+
+        const imageWrap = document.createElement("div");
+        imageWrap.className = "slot-image";
+        if (player) {
+          const image = document.createElement("img");
+          image.alt = player.name;
+          imageWrap.appendChild(image);
+          setPlayerImage(image, imageWrap, player);
+        } else {
+          imageWrap.textContent = "空位";
+        }
+
+        const body = document.createElement("div");
+        body.className = "slot-body";
+
+        const name = document.createElement("h3");
+        name.className = "slot-name";
+        name.textContent = player ? player.name : "等待发掘";
+
+        const desc = document.createElement("p");
+        desc.className = "slot-desc";
+        desc.textContent = player ? player.desc : "";
+
+        body.append(name, desc);
+        slot.append(imageWrap, body);
+        squad.appendChild(slot);
+      }
+
+      startButton.classList.toggle("visible", team.length >= 3);
+      digButton.classList.toggle("hidden", team.length >= 4);
+      digLabel.classList.toggle("hidden", team.length >= 4);
+    }
+
+    function nextPlayer() {
+      const usedIds = new Set(team.map((player) => player.id));
+      const available = allPlayers.filter((player) => !usedIds.has(player.id));
+      return available[Math.floor(Math.random() * available.length)];
+    }
+
+    function getAverageScore(players) {
+      if (!players.length) {
+        return 0;
+      }
+
+      const total = players.reduce((sum, player) => sum + (Number(player.score) || 0), 0);
+      return total / players.length;
+    }
+
+    function getMatchOutcome(players) {
+      const others = players.filter((player) => player.id !== "3mz");
+      const averageScore = getAverageScore(others);
+      const count = players.length;
+      const scoreText = averageScore.toFixed(1).replace(".0", "");
+
+      if (averageScore < 60) {
+        return {
+          stage: "小组赛",
+          result: "小组赛第一轮淘汰",
+          stopAt: "group",
+          title: "小组赛止步",
+          text: `虎哥尽力了，队友太菜没办法谁来都一样，说句实话虎哥真是遇人不淑。`
+        };
+      }
+
+      if (averageScore < 65) {
+        return {
+          stage: "淘汰赛",
+          result: "败者组第一轮淘汰",
+          stopAt: "elimination1",
+          title: "败者组第一轮出局",
+          text: `扛过了小组赛但是没打赢败者组。好在没有20进3，虎哥我们下次干回来。`
+        };
+      }
+
+      if (averageScore < 72) {
+        return {
+          stage: "淘汰赛",
+          result: "败者组第二轮淘汰",
+          stopAt: "elimination2",
+          title: "败者组第二轮止步",
+          text: `没有撑过败者组第二轮。虎哥已经拉满燃尽了还是带不动这个队伍吗。`
+        };
+      }
+
+      if (count === 4 && averageScore > 85) {
+        return {
+          stage: "决赛",
+          result: "决赛夺冠",
+          stopAt: "final",
+          title: "冠军到手",
+          text: `另外三人终于组成了梦中的冠军阵容夺得了冠军。你问虎哥去哪了？想要夺冠，前提是3t1把3mz踢了。`
+        };
+      }
+
+      if (count === 3) {
+        return {
+          stage: "决赛",
+          result: "决赛淘汰",
+          stopAt: "final",
+          title: "决赛惜败",
+          text: `又一次，虎哥又一次是悲情英雄吗，还是不行，还是撑不住倒在了夺冠前一步。`
+        };
+      }
+
+      return {
+        stage: "决赛",
+        result: "决赛淘汰",
+        stopAt: "final",
+        title: "决赛淘汰",
+        text: `三个人都带不动你虎哥，我说句实话给虎哥踢了应该早赢了。`
+      };
+    }
+
+    function setMatchOverlayState(visible, kind = "") {
+      matchOverlay.classList.toggle("visible", visible);
+      matchOverlay.classList.remove("running", "win", "lose");
+      if (kind) {
+        matchOverlay.classList.add(kind);
+      }
+      matchOverlay.setAttribute("aria-hidden", visible ? "false" : "true");
+    }
+
+    function setResultScreenState(visible) {
+      resultScreen.classList.toggle("visible", visible);
+      resultScreen.setAttribute("aria-hidden", visible ? "false" : "true");
+    }
+
+    function setInteractionLocked(locked) {
+      startButton.disabled = locked;
+      digButton.disabled = locked || team.length >= 4;
+    }
+
+    function resetTeam() {
+      const initialPlayer = allPlayers.find((player) => player.id === initialPlayerId);
+      team = initialPlayer ? [initialPlayer] : [];
+      isStartingMatch = false;
+      isMatchLocked = false;
+      startButton.textContent = "开始比赛";
+      setMatchOverlayState(false);
+      setResultScreenState(false);
+      renderTeam();
+      setInteractionLocked(false);
+    }
+
+    function showResult(outcome) {
+      resultStage.textContent = `${outcome.stage} · ${outcome.result}`;
+      resultTitle.textContent = outcome.title;
+      resultBody.textContent = outcome.text;
+      setResultScreenState(true);
+    }
+
+    function getMatchLines(outcome) {
+      if (outcome.stopAt === "group") {
+        return [
+          { at: 0, stage: "小组赛", text: "正在布置比赛场地。" },
+          { at: 1600, stage: "小组赛", text: "正在调整设备，确认每个人的状态。" },
+          { at: 3200, stage: "小组赛", text: "第一轮交火结束，队伍已经很难继续推进。" }
+        ];
+      }
+
+      if (outcome.stopAt === "elimination1") {
+        return [
+          { at: 0, stage: "小组赛", text: "正在布置比赛场地。" },
+          { at: 1600, stage: "小组赛", text: "正在调整设备，确认每个人的状态。" },
+          { at: 3200, stage: "淘汰赛", text: "正在鼓舞士气，准备进入败者组第一轮。" },
+          { at: 5000, stage: "淘汰赛", text: "败者组第一轮结束，队伍没能稳住。" }
+        ];
+      }
+
+      if (outcome.stopAt === "elimination2") {
+        return [
+          { at: 0, stage: "小组赛", text: "正在布置比赛场地。" },
+          { at: 1600, stage: "小组赛", text: "正在调整设备，确认每个人的状态。" },
+          { at: 3200, stage: "淘汰赛", text: "正在鼓舞士气，准备进入败者组第一轮。" },
+          { at: 5000, stage: "淘汰赛", text: "撑过第一轮，正在复盘路线与站位。" },
+          { at: 6800, stage: "淘汰赛", text: "败者组第二轮结束，晋级希望停在这里。" }
+        ];
+      }
+
+      return [
+        { at: 0, stage: "小组赛", text: "正在布置比赛场地。" },
+        { at: 1600, stage: "小组赛", text: "正在调整设备，确认每个人的状态。" },
+        { at: 3200, stage: "淘汰赛", text: "正在鼓舞士气，准备进入淘汰赛。" },
+        { at: 5000, stage: "淘汰赛", text: "正在复盘路线与站位，避免任何失误。" },
+        { at: 6800, stage: "决赛", text: "已经进入最后阶段，准备揭晓结果。" }
+      ];
+    }
+
+    function runMatchSequence() {
+      if (isStartingMatch || isMatchLocked) {
+        return;
+      }
+
+      const outcome = getMatchOutcome(team);
+      const lines = getMatchLines(outcome);
+      const finishAt = lines[lines.length - 1].at + 1800;
+
+      isStartingMatch = true;
+      setInteractionLocked(true);
+      setMatchOverlayState(true, "running");
+      setResultScreenState(false);
+      matchStage.textContent = lines[0].stage;
+      matchText.textContent = lines[0].text;
+
+      lines.forEach((line) => {
+        window.setTimeout(() => {
+          matchStage.textContent = line.stage;
+          matchText.textContent = line.text;
+        }, line.at);
+      });
+
+      window.setTimeout(() => {
+        setMatchOverlayState(false);
+        showResult(outcome);
+        isStartingMatch = false;
+        isMatchLocked = true;
+        setInteractionLocked(true);
+      }, finishAt);
+    }
+
+    function showPlayer(player) {
+      modalImage.alt = player.name;
+      setModalImage(player);
+      modalName.textContent = player.name;
+      modalDesc.textContent = player.desc;
+      playerModal.classList.add("visible");
+    }
+
+    digButton.addEventListener("click", () => {
+      if (team.length >= 4) {
+        return;
+      }
+
+      const player = nextPlayer();
+      if (!player) {
+        return;
+      }
+
+      team.push(player);
+      showPlayer(player);
+      renderTeam();
+    });
+
+    playerModal.addEventListener("click", () => {
+      playerModal.classList.remove("visible");
+    });
+
+    startButton.addEventListener("click", () => {
+      runMatchSequence();
+    });
+
+    retryButton.addEventListener("click", () => {
+      resetTeam();
+    });
+
+    fetch(dataPath)
+      .then((response) => response.json())
+      .then((data) => {
+        allPlayers = (data.players || []).map(normalizePlayer);
+        initialPlayerId = data.initialPlayerId || "3mz";
+        resetTeam();
+      })
+      .catch(() => {
+        allPlayers = [{
+          id: "3mz",
+          name: "3mz",
+          score: 0,
+          desc: "固定队员，简介可在 resource/players.json 里修改。"
+        }];
+        initialPlayerId = "3mz";
+        resetTeam();
+      });
+  </script>
+</body>
+</html>

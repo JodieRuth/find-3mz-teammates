@@ -1,0 +1,137 @@
+{
+  "initialPlayerId": "3mz",
+  "players": [
+    {
+      "id": "3mz",
+      "name": "3mz",
+      "score": 0,
+      "desc": "ALGS国内外大满贯，被MDY黑社会陷害的悲情英雄。正在召集队友准备复出杀回ALGS。"
+    },
+    {
+      "id": "Pite174",
+      "name": "Pite174",
+      "score": 55,
+      "desc": "DreamFire老牌枪男，最好的地平线使用者。"
+    },
+    {
+      "id": "Roieee",
+      "name": "Roieee",
+      "score": 75,
+      "desc": "最好的三号位，DreamFire老牌枪男。最近表现不佳，爱好是刷油漆。"
+    },
+    {
+      "id": "BoLin",
+      "name": "Bolin",
+      "score": 50,
+      "desc": "DreamFire新晋选手，梦火冉冉升起的新星。"
+    },
+    {
+      "id": "XiaoKai",
+      "name": "XiaoKai",
+      "score": 65,
+      "desc": "前MDY黑社会成员，现在已经被镶在墙里，下落不明。"
+    },
+    {
+      "id": "Noname",
+      "name": "Noname",
+      "score": 95,
+      "desc": "3mz的前队友，曾经一起参加线下赛，后因为打得太菜不听指挥自尊了。"
+    },
+    {
+      "id": "951",
+      "name": "951",
+      "score": 90,
+      "desc": "MDY黑社会的神秘前成员。"
+    },
+    {
+      "id": "Kasssa",
+      "name": "Kasssa",
+      "score": 100,
+      "desc": "卡者如莎，MDY黑社会的主要成员。你说得对，但是播一休七，________。"
+    },
+    {
+      "id": "BJJS_012",
+      "name": "BJJS_012",
+      "score": 75,
+      "desc": "冷知识，蛋蛋鼠是huge发掘的。"
+    },
+    {
+      "id": "QQ",
+      "name": "QQ",
+      "score": 95,
+      "desc": "CNAPEX唯一的FMVP，另类的悲情英雄，带着一个不会走路的指挥和只用开枪的三号位拿了冠军。"
+    },
+    {
+      "id": "LqDuD",
+      "name": "LqDud",
+      "score": 100,
+      "desc": "纯混子三号位，只用挂挂机开开枪就好了，看不出来对团队有什么作用。"
+    },
+    {
+      "id": "YouL1ng",
+      "name": "YouLing",
+      "score": 65,
+      "desc": "来自MDY黑社会的一名选手，时运不济。"
+    },
+    {
+      "id": "FeiJu",
+      "name": "FeiJu",
+      "score": 65,
+      "desc": "来自MDY黑社会的一名选手，成名绝技是单向烟。曾经与3mz同台竞技过，但最终落败。"
+    },
+    {
+      "id": "GuGu",
+      "name": "GuGu",
+      "score": 70,
+      "desc": "曾经效力于MDY黑社会的一名手柄选手，承诺过和3mz一起复出打CC。"
+    },
+    {
+      "id": "JonnyR",
+      "name": "JonnyR",
+      "score": 85,
+      "desc": "宇宙级的锁住，曾经入职过大斧社团，但最终因打得太菜自尊。"
+    },
+    {
+      "id": "Return",
+      "name": "Return",
+      "score": 70,
+      "desc": "纯粹的小孩，出道就是谷底，受到huge恩惠进过一次线下以后再也没进过。"
+    },
+    {
+      "id": "Xd",
+      "name": "Xd",
+      "score": 65,
+      "desc": "早年随着JR组成XNY出征，但近日已经归入大斧社团麾下。一滴红队也是红。"
+    },
+    {
+      "id": "Zer0",
+      "name": "Zer0",
+      "score": 85,
+      "desc": "据称是前BEST IGL。但大家都明白，他已经是huge的手下败将了。"
+    },
+    {
+      "id": "ImperialHal",
+      "name": "ImperialHal",
+      "score": 100,
+      "desc": "Apex这个游戏的前GOAT。在伯明翰之后这个头衔已经被移交给了huge。"
+    },
+    {
+      "id": "Genburten",
+      "name": "Genburten",
+      "score": 90,
+      "desc": "据称是最好的手柄三号位，但失去了huge的庇佑又被Zer0宫斗以后，已经不知道在哪里发财了。"
+    },
+    {
+      "id": "ASIAZXD",
+      "name": "ASIAZXD",
+      "score": 95,
+      "desc": "多次表达过要加入DF的优质键鼠选手，但huge心系家人被屡次婉拒。"
+    },
+    {
+      "id": "YukaF",
+      "name": "YukaF",
+      "score": 90,
+      "desc": "来自日本的传奇捕虎人，和huge有过诸多恩怨，已经很久没有资格挑战huge了。"
+    }
+  ]
+}
